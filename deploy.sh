@@ -31,7 +31,7 @@ if [ $# -eq 2 ]; then
   echo -e "${txtylw}=======================================${txtrst}"
   echo -e "${txtgra}  << $0 스크립트 실행 실패!🧐 >>${txtrst}"
   echo -e ""
-  echo -e "${txtblu} 당신의 브랜치를 고르세요 : ${txtred}{ main | dev }"
+  echo -e "${txtblu} 로그 출력 여부를 고르세요 : ${txtred}{ Y | N }"
   echo -e "${txtylw}=======================================${txtrst}"
   exit
 fi
@@ -40,7 +40,7 @@ if [ $# -ne 3 ]; then
   echo -e "${txtylw}=======================================${txtrst}"
   echo -e "${txtgra}  << $0 스크립트 실행 실패!🧐 >>${txtrst}"
   echo -e ""
-  echo -e "${txtblu} 로그 출력 여부를 고르세요 : ${txtred}{ Y | N }"
+  echo -e "${txtblu} 당신의 브랜치를 고르세요 : ${txtred}{ main | dev }"
   echo -e "${txtylw}=======================================${txtrst}"
   exit
 fi
