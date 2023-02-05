@@ -15,6 +15,7 @@ PROJECT_NAME=infra-subway-deploy
 JAR_REPOSITORY=$PROJECT_PATH/$PROJECT_NAME/build/libs
 BRANCH=$1
 PROFILE=$2
+LOG=$3
 
 ## 조건 설정
 if [ $# -eq 1 ]; then
@@ -26,11 +27,20 @@ if [ $# -eq 1 ]; then
   exit
 fi
 
-if [ $# -ne 2 ]; then
+if [ $# -eq 2 ]; then
   echo -e "${txtylw}=======================================${txtrst}"
   echo -e "${txtgra}  << $0 스크립트 실행 실패!🧐 >>${txtrst}"
   echo -e ""
   echo -e "${txtblu} 당신의 브랜치를 고르세요 : ${txtred}{ main | dev }"
+  echo -e "${txtylw}=======================================${txtrst}"
+  exit
+fi
+
+if [ $# -ne 3 ]; then
+  echo -e "${txtylw}=======================================${txtrst}"
+  echo -e "${txtgra}  << $0 스크립트 실행 실패!🧐 >>${txtrst}"
+  echo -e ""
+  echo -e "${txtblu} 로그 출력 여부를 고르세요 : ${txtred}{ Y | N }"
   echo -e "${txtylw}=======================================${txtrst}"
   exit
 fi
@@ -42,14 +52,14 @@ function start() {
 }
 
 function check_df() {
-    git fetch
-    master=$(git rev-parse "$BRANCH")
-    remote=$(git rev-parse origin/"$BRANCH")
+  git fetch
+  master=$(git rev-parse "$BRANCH")
+  remote=$(git rev-parse origin/"$BRANCH")
 
-    if [[ "$master" == "$remote" ]]; then
-      echo -e "[$(date)] Nothing to do!!! 😫"
-      exit 1
-    fi
+  if [[ "$master" == "$remote" ]]; then
+    echo -e "[$(date)] Nothing to do!!! 😫"
+    exit 1
+  fi
 }
 
 function pull() {
@@ -76,7 +86,7 @@ function pid() {
   if [ -z "$CURRENT_PID" ]; then
     echo -e "${txtgrn}  << 구동중인 app이 없습니다 🙄 >>${txtrst}"
   else
-    echo -e"${txtred} << $CURRENT_PID 프로그램 종료 >>"
+    echo -e "${txtred} << $CURRENT_PID 프로그램 종료 >>"
     kill -15 "$CURRENT_PID"
     sleep 5
   fi
@@ -87,13 +97,15 @@ function server() {
   cd $JAR_REPOSITORY || return
   JAR_NAME=$(ls -tr "$JAR_REPOSITORY"/ | grep jar)
   echo -e "${txtpur} ${PROFILE} 설정으로 시작합니다. "
-  nohup java -jar -Dspring.profiles.active="${PROFILE}" "${JAR_REPOSITORY}"/"${JAR_NAME}" 1> nohup.out 2>&1  &
+  nohup java -jar -Dspring.profiles.active="${PROFILE}" "${JAR_REPOSITORY}"/"${JAR_NAME}" 1>nohup.out 2>&1 &
   echo -e "${txtgrn}=======================================${txtrst}"
 }
 
 function log() {
-  echo -e "${txtgrn}  << 로그 🎉 >>${txtrst}"
-  tail -f $JAR_REPOSITORY/nohup.out
+  if [[ "$LOG" == "Y" ]]; then
+    echo -e "${txtgrn}  << 로그 🎉 >>${txtrst}"
+    tail -f $JAR_REPOSITORY/nohup.out
+  fi
 }
 
 ## 시작
